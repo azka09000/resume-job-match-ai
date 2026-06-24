@@ -8,6 +8,7 @@ from src.file_processor import extract_resume_text
 from src.text_preprocessor import clean_text
 from src.skill_extractor import extract_skills
 from src.matcher import calculate_match
+from src.recommender import get_recommendation
 
 st.set_page_config(page_title="Resume AI Matcher", layout="wide")
 
@@ -114,9 +115,7 @@ if uploaded_file and job_description:
         )
 
         for skill in sorted(missing_skills):
-            st.info(
-                f"Add projects, coursework, certifications, or experience related to **{skill}**."
-            )
+            st.info(get_recommendation(skill))
     else:
         st.success(
             "Great! Your resume covers all detected job requirements."
@@ -126,4 +125,8 @@ if uploaded_file and job_description:
     # EXTRACTED RESUME TEXT
     # ----------------------------
     with st.expander("📄 View Extracted Resume Text"):
-        st.write(resume_text)
+        st.text_area(
+            "Extracted Text",
+            resume_text,
+            height=300
+        )
