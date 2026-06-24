@@ -15,6 +15,7 @@ An AI-powered Resume Screening and Job Matching System that analyzes a candidate
 * Skill match and coverage analysis
 * Matching and missing skill detection
 * Personalized recommendations based on identified skill gaps
+* View extracted resume text and detected skills
 * Interactive Streamlit web application
 
 ⸻
@@ -51,6 +52,10 @@ resume-job-match-ai/
 │   └── skills.csv
 │
 ├── assets/
+│   ├── home_page.png
+│   ├── match_analysis.png
+│   └── technical_details.png
+│
 ├── requirements.txt
 └── README.md
 
@@ -58,12 +63,12 @@ resume-job-match-ai/
 
 ⚙️ How to Run
 
-1. Clone the repository
+1. Clone the Repository
 
 git clone https://github.com/azka09000/resume-job-match-ai.git
 cd resume-job-match-ai
 
-2. Create a virtual environment
+2. Create a Virtual Environment
 
 Windows
 
@@ -75,13 +80,29 @@ macOS/Linux
 python3 -m venv .venv
 source .venv/bin/activate
 
-3. Install dependencies
+3. Install Dependencies
 
 pip install -r requirements.txt
 
-4. Run the application
+4. Run the Application
 
 streamlit run app/streamlit_app.py
+
+⸻
+
+🖥️ Application Screenshots
+
+Home Screen
+
+Upload a resume and paste a job description to begin the analysis.
+
+Match Analysis
+
+The system calculates skill overlap and semantic similarity to provide an ATS-style compatibility score.
+
+Technical Details
+
+View extracted resume text and inspect the detected skills from both the resume and job description.
 
 ⸻
 
@@ -128,6 +149,19 @@ This project demonstrates:
 * Data preprocessing and text cleaning
 * Building interactive AI applications with Streamlit
 * End-to-end Python project development
+* Git and GitHub project management
+* Documentation and software engineering best practices
+
+⸻
+
+🚀 Future Improvements
+
+* Resume keyword optimization suggestions
+* Export analysis reports as PDF
+* Support for multiple resume templates
+* Named Entity Recognition (NER) for improved skill extraction
+* More advanced ATS scoring algorithms
+* Deploy the application using Streamlit Cloud
 
 ⸻
 
