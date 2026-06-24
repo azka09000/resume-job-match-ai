@@ -12,8 +12,15 @@ from src.matcher import calculate_match
 st.set_page_config(page_title="Resume AI Matcher", layout="wide")
 
 st.title("📄 Resume Screening + Job Match AI System")
+st.markdown(
+    "Upload your resume and paste a job description to analyze your compatibility."
+)
 
-uploaded_file = st.file_uploader("Upload Resume (PDF/DOCX)", type=["pdf", "docx"])
+uploaded_file = st.file_uploader(
+    "Upload Resume (PDF/DOCX)",
+    type=["pdf", "docx"]
+)
+
 job_description = st.text_area("Paste Job Description")
 
 if uploaded_file and job_description:
@@ -29,21 +36,70 @@ if uploaded_file and job_description:
     resume_skills = extract_skills(clean_resume)
     job_skills = extract_skills(clean_job)
 
-    # 4. Match score
-    score = calculate_match(clean_resume, clean_job)
+    # 4. Skill overlap analysis
+    matching_skills = set(resume_skills).intersection(job_skills)
+    missing_skills = set(job_skills) - set(resume_skills)
 
-    # 5. Missing skills
-    missing_skills = list(set(job_skills) - set(resume_skills))
+    skill_match_score = (
+        len(matching_skills) / len(job_skills) * 100
+        if job_skills
+        else 0
+    )
 
-    # OUTPUT UI
-    st.subheader("📊 Match Score")
-    st.metric(label="Compatibility", value=f"{score}%")
+    # 5. TF-IDF similarity score
+    tfidf_score = calculate_match(clean_resume, clean_job)
 
-    st.subheader("✅ Matching Skills")
-    st.write(resume_skills)
+    # ----------------------------
+    # SCORE SECTION
+    # ----------------------------
+    st.subheader("📊 Match Analysis")
 
-    st.subheader("❌ Missing Skills")
-    st.write(missing_skills)
+    col1, col2 = st.columns(2)
 
-    st.subheader("📄 Extracted Resume Text")
-    st.write(resume_text)
+    with col1:
+        st.metric(
+            label="TF-IDF Similarity",
+            value=f"{tfidf_score}%"
+        )
+
+    with col2:
+        st.metric(
+            label="Skill Match",
+            value=f"{skill_match_score:.2f}%"
+        )
+
+    # ----------------------------
+    # SKILL SECTION
+    # ----------------------------
+    col3, col4 = st.columns(2)
+
+    with col3:
+        st.subheader("✅ Matching Skills")
+
+        if matching_skills:
+            for skill in sorted(matching_skills):
+                st.success(f"✓ {skill}")
+        else:
+            st.info("No matching skills found.")
+
+    with col4:
+        st.subheader("❌ Missing Skills")
+
+        if missing_skills:
+            for skill in sorted(missing_skills):
+                st.warning(f"✗ {skill}")
+        else:
+            st.success("No missing skills detected.")
+
+    # ----------------------------
+    # DEBUG SECTION
+    # ----------------------------
+    with st.expander("🔍 View Extracted Skills"):
+        st.write("Resume Skills:", sorted(resume_skills))
+        st.write("Job Skills:", sorted(job_skills))
+
+    # ----------------------------
+    # EXTRACTED RESUME TEXT
+    # ----------------------------
+    with st.expander("📄 View Extracted Resume Text"):
+        st.write(resume_text)
