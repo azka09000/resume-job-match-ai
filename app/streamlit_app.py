@@ -2,7 +2,11 @@ import streamlit as st
 import sys
 import os
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+sys.path.append(
+    os.path.abspath(
+        os.path.join(os.path.dirname(__file__), "..")
+    )
+)
 
 from src.file_processor import extract_resume_text
 from src.text_preprocessor import clean_text
@@ -51,8 +55,13 @@ if uploaded_file and job_description:
     # ============================
     # 3. Extract Skills
     # ============================
-    resume_skills = set(extract_skills(clean_resume))
-    job_skills = set(extract_skills(clean_job))
+    resume_skills = set(
+        extract_skills(clean_resume)
+    )
+
+    job_skills = set(
+        extract_skills(clean_job)
+    )
 
     # ============================
     # 4. Skill Analysis
@@ -66,6 +75,12 @@ if uploaded_file and job_description:
     )
 
     skill_match_score = (
+        len(matching_skills) / len(job_skills) * 100
+        if job_skills
+        else 0
+    )
+
+    coverage = (
         len(matching_skills) / len(job_skills) * 100
         if job_skills
         else 0
@@ -94,11 +109,11 @@ if uploaded_file and job_description:
     # ============================
     # ATS Verdict
     # ============================
-    if overall_score >= 80:
+    if overall_score >= 75:
         verdict = "🟢 Excellent Match"
-    elif overall_score >= 60:
+    elif overall_score >= 50:
         verdict = "🟡 Good Match"
-    elif overall_score >= 40:
+    elif overall_score >= 30:
         verdict = "🟠 Moderate Match"
     else:
         verdict = "🔴 Low Match"
@@ -107,7 +122,25 @@ if uploaded_file and job_description:
     # MATCH ANALYSIS
     # ============================
     st.subheader("📊 Match Analysis")
-    st.info(f"ATS Verdict: **{verdict}**")
+
+    st.info(
+        f"ATS Verdict: **{verdict}**"
+    )
+
+    if overall_score >= 70:
+        st.success(
+            "Your resume appears to be strongly aligned with this role."
+        )
+    elif overall_score >= 40:
+        st.info(
+            "Your resume partially matches this role. "
+            "Review the missing skills below to improve compatibility."
+        )
+    else:
+        st.warning(
+            "Your resume currently has limited alignment with this role. "
+            "Consider addressing the recommendations below."
+        )
 
     col1, col2, col3 = st.columns(3)
 
@@ -139,7 +172,8 @@ if uploaded_file and job_description:
 
     st.caption(
         f"Matched {len(matching_skills)} of "
-        f"{len(job_skills)} detected job skills."
+        f"{len(job_skills)} detected job skills "
+        f"({coverage:.0f}% coverage)."
     )
 
     col4, col5 = st.columns(2)
@@ -154,7 +188,9 @@ if uploaded_file and job_description:
             for skill in matching_skills:
                 st.success(f"✓ {skill}")
         else:
-            st.info("No matching skills found.")
+            st.info(
+                "No matching skills found."
+            )
 
     with col5:
         st.metric(
@@ -166,7 +202,9 @@ if uploaded_file and job_description:
             for skill in missing_skills:
                 st.warning(f"✗ {skill}")
         else:
-            st.success("No missing skills detected.")
+            st.success(
+                "No missing skills detected."
+            )
 
     # ============================
     # RECOMMENDATIONS
@@ -181,7 +219,9 @@ if uploaded_file and job_description:
         )
 
         for skill in missing_skills:
-            st.info(get_recommendation(skill))
+            st.info(
+                get_recommendation(skill)
+            )
 
     else:
         st.success(
@@ -191,7 +231,9 @@ if uploaded_file and job_description:
     # ============================
     # EXTRACTED RESUME TEXT
     # ============================
-    with st.expander("📄 View Extracted Resume Text"):
+    with st.expander(
+        "📄 View Extracted Resume Text"
+    ):
 
         if resume_text.strip():
             st.text_area(
@@ -216,6 +258,7 @@ if uploaded_file and job_description:
             "Resume Skills:",
             sorted(resume_skills)
         )
+
         st.write(
             "Job Skills:",
             sorted(job_skills)
