@@ -49,17 +49,23 @@ if uploaded_file and job_description:
     # 5. TF-IDF similarity score
     tfidf_score = calculate_match(clean_resume, clean_job)
 
+    # 6. Overall score
+    overall_score = (
+        skill_match_score * 0.7 +
+        tfidf_score * 0.3
+    )
+
     # ----------------------------
     # SCORE SECTION
     # ----------------------------
     st.subheader("📊 Match Analysis")
 
-    col1, col2 = st.columns(2)
+    col1, col2, col3 = st.columns(3)
 
     with col1:
         st.metric(
-            label="TF-IDF Similarity",
-            value=f"{tfidf_score}%"
+            label="Overall Match",
+            value=f"{overall_score:.2f}%"
         )
 
     with col2:
@@ -68,12 +74,18 @@ if uploaded_file and job_description:
             value=f"{skill_match_score:.2f}%"
         )
 
-    # ----------------------------
-    # SKILL SECTION
-    # ----------------------------
-    col3, col4 = st.columns(2)
-
     with col3:
+        st.metric(
+            label="TF-IDF Similarity",
+            value=f"{tfidf_score:.2f}%"
+        )
+
+    # ----------------------------
+    # SKILLS SECTION
+    # ----------------------------
+    col4, col5 = st.columns(2)
+
+    with col4:
         st.subheader("✅ Matching Skills")
 
         if matching_skills:
@@ -82,7 +94,7 @@ if uploaded_file and job_description:
         else:
             st.info("No matching skills found.")
 
-    with col4:
+    with col5:
         st.subheader("❌ Missing Skills")
 
         if missing_skills:
@@ -92,11 +104,23 @@ if uploaded_file and job_description:
             st.success("No missing skills detected.")
 
     # ----------------------------
-    # DEBUG SECTION
+    # RECOMMENDATIONS SECTION
     # ----------------------------
-    with st.expander("🔍 View Extracted Skills"):
-        st.write("Resume Skills:", sorted(resume_skills))
-        st.write("Job Skills:", sorted(job_skills))
+    st.subheader("💡 Recommendations")
+
+    if missing_skills:
+        st.write(
+            "Consider highlighting or developing experience in the following areas:"
+        )
+
+        for skill in sorted(missing_skills):
+            st.info(
+                f"Add projects, coursework, certifications, or experience related to **{skill}**."
+            )
+    else:
+        st.success(
+            "Great! Your resume covers all detected job requirements."
+        )
 
     # ----------------------------
     # EXTRACTED RESUME TEXT
