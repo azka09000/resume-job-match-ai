@@ -37,26 +37,26 @@ job_description = st.text_area(
 
 if uploaded_file and job_description:
 
-    # ----------------------------
+    # ============================
     # 1. Extract Resume Text
-    # ----------------------------
+    # ============================
     resume_text = extract_resume_text(uploaded_file)
 
-    # ----------------------------
+    # ============================
     # 2. Clean Text
-    # ----------------------------
+    # ============================
     clean_resume = clean_text(resume_text)
     clean_job = clean_text(job_description)
 
-    # ----------------------------
+    # ============================
     # 3. Extract Skills
-    # ----------------------------
+    # ============================
     resume_skills = set(extract_skills(clean_resume))
     job_skills = set(extract_skills(clean_job))
 
-    # ----------------------------
+    # ============================
     # 4. Skill Analysis
-    # ----------------------------
+    # ============================
     matching_skills = sorted(
         resume_skills.intersection(job_skills)
     )
@@ -71,26 +71,43 @@ if uploaded_file and job_description:
         else 0
     )
 
-    # ----------------------------
-    # 5. Semantic Similarity
-    # ----------------------------
+    # ============================
+    # 5. TF-IDF Similarity
+    # ============================
     tfidf_score = calculate_match(
         clean_resume,
         clean_job
     )
 
-    # ----------------------------
+    # ============================
     # 6. Overall Score
-    # ----------------------------
+    # ============================
     overall_score = (
         skill_match_score * 0.7 +
         tfidf_score * 0.3
     )
 
+    overall_score = min(overall_score, 100)
+    skill_match_score = min(skill_match_score, 100)
+    tfidf_score = min(tfidf_score, 100)
+
+    # ============================
+    # ATS Verdict
+    # ============================
+    if overall_score >= 80:
+        verdict = "🟢 Excellent Match"
+    elif overall_score >= 60:
+        verdict = "🟡 Good Match"
+    elif overall_score >= 40:
+        verdict = "🟠 Moderate Match"
+    else:
+        verdict = "🔴 Low Match"
+
     # ============================
     # MATCH ANALYSIS
     # ============================
     st.subheader("📊 Match Analysis")
+    st.info(f"ATS Verdict: **{verdict}**")
 
     col1, col2, col3 = st.columns(3)
 
@@ -119,6 +136,11 @@ if uploaded_file and job_description:
     # SKILL SUMMARY
     # ============================
     st.subheader("📌 Skill Summary")
+
+    st.caption(
+        f"Matched {len(matching_skills)} of "
+        f"{len(job_skills)} detected job skills."
+    )
 
     col4, col5 = st.columns(2)
 
@@ -152,14 +174,15 @@ if uploaded_file and job_description:
     st.subheader("💡 Recommendations")
 
     if missing_skills:
+
         st.write(
-            "Consider strengthening or highlighting experience in the following areas:"
+            "Consider strengthening or highlighting "
+            "experience in the following areas:"
         )
 
         for skill in missing_skills:
-            st.info(
-                get_recommendation(skill)
-            )
+            st.info(get_recommendation(skill))
+
     else:
         st.success(
             "Excellent! Your resume covers all detected job requirements."
@@ -169,15 +192,31 @@ if uploaded_file and job_description:
     # EXTRACTED RESUME TEXT
     # ============================
     with st.expander("📄 View Extracted Resume Text"):
-        st.text_area(
-            "Extracted Text",
-            resume_text,
-            height=300
-        )
+
+        if resume_text.strip():
+            st.text_area(
+                "Extracted Text",
+                resume_text,
+                height=300
+            )
+        else:
+            st.warning(
+                "No text could be extracted from the uploaded file."
+            )
 
     # ============================
-    # DETECTED SKILLS
+    # TECHNICAL DETAILS
     # ============================
-    with st.expander("🔍 View Detected Skills"):
-        st.write("Resume Skills:", sorted(resume_skills))
-        st.write("Job Skills:", sorted(job_skills))
+    show_debug = st.checkbox(
+        "🔍 Show Technical Details"
+    )
+
+    if show_debug:
+        st.write(
+            "Resume Skills:",
+            sorted(resume_skills)
+        )
+        st.write(
+            "Job Skills:",
+            sorted(job_skills)
+        )

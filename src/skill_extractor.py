@@ -35,6 +35,7 @@ SKILL_ALIASES = {
 
     # Frontend
     "user interface": "frontend",
+    "responsive user interface": "frontend",
     "responsive user interfaces": "frontend",
 
     # Databases
@@ -67,4 +68,12 @@ def extract_skills(text):
         if re.search(pattern, text):
             found_skills.add(normalized_skill)
 
-    return sorted(found_skills)
+    # Normalize extracted skills to avoid duplicates
+    normalized_skills = set()
+
+    for skill in found_skills:
+        normalized_skills.add(
+            SKILL_ALIASES.get(skill, skill)
+        )
+
+    return sorted(normalized_skills)
