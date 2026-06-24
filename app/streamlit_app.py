@@ -87,7 +87,7 @@ if uploaded_file and job_description:
     # ============================
     # 5. Semantic Similarity
     # ============================
-    semantic_score = (
+    semantic_score = float(
         calculate_semantic_similarity(
             clean_resume,
             clean_job
@@ -102,14 +102,15 @@ if uploaded_file and job_description:
         semantic_score * 0.4
     )
 
-    overall_score = min(overall_score, 100)
-    skill_match_score = min(
-        skill_match_score,
-        100
+    # Convert everything to Python floats
+    overall_score = float(
+        min(overall_score, 100)
     )
-    semantic_score = min(
-        semantic_score,
-        100
+    skill_match_score = float(
+        min(skill_match_score, 100)
+    )
+    semantic_score = float(
+        min(semantic_score, 100)
     )
 
     # ============================
@@ -128,22 +129,17 @@ if uploaded_file and job_description:
     # MATCH ANALYSIS
     # ============================
     st.subheader("📊 Match Analysis")
-
-    st.info(
-        f"ATS Verdict: **{verdict}**"
-    )
+    st.info(f"ATS Verdict: **{verdict}**")
 
     if overall_score >= 70:
         st.success(
             "Your resume appears to be strongly aligned with this role."
         )
-
     elif overall_score >= 40:
         st.info(
             "Your resume partially matches this role. "
             "Review the missing skills below to improve compatibility."
         )
-
     else:
         st.warning(
             "Your resume currently has limited alignment with this role. "
@@ -158,7 +154,7 @@ if uploaded_file and job_description:
             f"{overall_score:.2f}%"
         )
         st.progress(
-            overall_score / 100
+            float(overall_score / 100)
         )
 
     with col2:
@@ -167,7 +163,7 @@ if uploaded_file and job_description:
             f"{skill_match_score:.2f}%"
         )
         st.progress(
-            skill_match_score / 100
+            float(skill_match_score / 100)
         )
 
     with col3:
@@ -176,7 +172,7 @@ if uploaded_file and job_description:
             f"{semantic_score:.2f}%"
         )
         st.progress(
-            semantic_score / 100
+            float(semantic_score / 100)
         )
 
     # ============================
@@ -227,12 +223,9 @@ if uploaded_file and job_description:
     # ============================
     # RECOMMENDATIONS
     # ============================
-    st.subheader(
-        "💡 Recommendations"
-    )
+    st.subheader("💡 Recommendations")
 
     if missing_skills:
-
         st.write(
             "Consider strengthening or "
             "highlighting experience in "
@@ -241,11 +234,8 @@ if uploaded_file and job_description:
 
         for skill in missing_skills:
             st.info(
-                get_recommendation(
-                    skill
-                )
+                get_recommendation(skill)
             )
-
     else:
         st.success(
             "Excellent! Your resume covers "
@@ -258,7 +248,6 @@ if uploaded_file and job_description:
     with st.expander(
         "📄 View Extracted Resume Text"
     ):
-
         if resume_text.strip():
             st.text_area(
                 "Extracted Text",
@@ -281,14 +270,10 @@ if uploaded_file and job_description:
     if show_debug:
         st.write(
             "Resume Skills:",
-            sorted(
-                resume_skills
-            )
+            sorted(resume_skills)
         )
 
         st.write(
             "Job Skills:",
-            sorted(
-                job_skills
-            )
+            sorted(job_skills)
         )
