@@ -11,7 +11,9 @@ sys.path.append(
 from src.file_processor import extract_resume_text
 from src.text_preprocessor import clean_text
 from src.skill_extractor import extract_skills
-from src.matcher import calculate_match
+from src.semantic_matcher import (
+    calculate_semantic_similarity
+)
 from src.recommender import get_recommendation
 
 st.set_page_config(
@@ -80,31 +82,35 @@ if uploaded_file and job_description:
         else 0
     )
 
-    coverage = (
-        len(matching_skills) / len(job_skills) * 100
-        if job_skills
-        else 0
-    )
+    coverage = skill_match_score
 
     # ============================
-    # 5. TF-IDF Similarity
+    # 5. Semantic Similarity
     # ============================
-    tfidf_score = calculate_match(
-        clean_resume,
-        clean_job
+    semantic_score = (
+        calculate_semantic_similarity(
+            clean_resume,
+            clean_job
+        )
     )
 
     # ============================
     # 6. Overall Score
     # ============================
     overall_score = (
-        skill_match_score * 0.7 +
-        tfidf_score * 0.3
+        skill_match_score * 0.6 +
+        semantic_score * 0.4
     )
 
     overall_score = min(overall_score, 100)
-    skill_match_score = min(skill_match_score, 100)
-    tfidf_score = min(tfidf_score, 100)
+    skill_match_score = min(
+        skill_match_score,
+        100
+    )
+    semantic_score = min(
+        semantic_score,
+        100
+    )
 
     # ============================
     # ATS Verdict
@@ -131,11 +137,13 @@ if uploaded_file and job_description:
         st.success(
             "Your resume appears to be strongly aligned with this role."
         )
+
     elif overall_score >= 40:
         st.info(
             "Your resume partially matches this role. "
             "Review the missing skills below to improve compatibility."
         )
+
     else:
         st.warning(
             "Your resume currently has limited alignment with this role. "
@@ -149,21 +157,27 @@ if uploaded_file and job_description:
             "Overall Match",
             f"{overall_score:.2f}%"
         )
-        st.progress(overall_score / 100)
+        st.progress(
+            overall_score / 100
+        )
 
     with col2:
         st.metric(
             "Skill Match",
             f"{skill_match_score:.2f}%"
         )
-        st.progress(skill_match_score / 100)
+        st.progress(
+            skill_match_score / 100
+        )
 
     with col3:
         st.metric(
-            "TF-IDF Similarity",
-            f"{tfidf_score:.2f}%"
+            "Semantic Similarity",
+            f"{semantic_score:.2f}%"
         )
-        st.progress(tfidf_score / 100)
+        st.progress(
+            semantic_score / 100
+        )
 
     # ============================
     # SKILL SUMMARY
@@ -186,7 +200,9 @@ if uploaded_file and job_description:
 
         if matching_skills:
             for skill in matching_skills:
-                st.success(f"✓ {skill}")
+                st.success(
+                    f"✓ {skill}"
+                )
         else:
             st.info(
                 "No matching skills found."
@@ -200,7 +216,9 @@ if uploaded_file and job_description:
 
         if missing_skills:
             for skill in missing_skills:
-                st.warning(f"✗ {skill}")
+                st.warning(
+                    f"✗ {skill}"
+                )
         else:
             st.success(
                 "No missing skills detected."
@@ -209,23 +227,29 @@ if uploaded_file and job_description:
     # ============================
     # RECOMMENDATIONS
     # ============================
-    st.subheader("💡 Recommendations")
+    st.subheader(
+        "💡 Recommendations"
+    )
 
     if missing_skills:
 
         st.write(
-            "Consider strengthening or highlighting "
-            "experience in the following areas:"
+            "Consider strengthening or "
+            "highlighting experience in "
+            "the following areas:"
         )
 
         for skill in missing_skills:
             st.info(
-                get_recommendation(skill)
+                get_recommendation(
+                    skill
+                )
             )
 
     else:
         st.success(
-            "Excellent! Your resume covers all detected job requirements."
+            "Excellent! Your resume covers "
+            "all detected job requirements."
         )
 
     # ============================
@@ -243,7 +267,8 @@ if uploaded_file and job_description:
             )
         else:
             st.warning(
-                "No text could be extracted from the uploaded file."
+                "No text could be extracted "
+                "from the uploaded file."
             )
 
     # ============================
@@ -256,10 +281,14 @@ if uploaded_file and job_description:
     if show_debug:
         st.write(
             "Resume Skills:",
-            sorted(resume_skills)
+            sorted(
+                resume_skills
+            )
         )
 
         st.write(
             "Job Skills:",
-            sorted(job_skills)
+            sorted(
+                job_skills
+            )
         )
