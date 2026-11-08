@@ -1,10 +1,10 @@
-📄 Resume Job Match AI System
+Resume Job Match AI System
 
 An AI-powered Resume Screening and Job Matching System that analyzes a candidate’s resume against a job description using Natural Language Processing (NLP), semantic similarity with Sentence Transformers, and skill-gap analysis. The system provides ATS-style compatibility scoring and personalized recommendations to help candidates improve their resumes.
 
 ⸻
 
-🚀 Features
+Features
 
 * Upload resumes in PDF or DOCX format
 * Paste any job description for analysis
@@ -20,7 +20,7 @@ An AI-powered Resume Screening and Job Matching System that analyzes a candidate
 
 ⸻
 
-🧠 Tech Stack
+Tech Stack
 
 * Python
 * Streamlit
@@ -34,7 +34,7 @@ An AI-powered Resume Screening and Job Matching System that analyzes a candidate
 
 ⸻
 
-📂 Project Structure
+Project Structure
 
 resume-job-match-ai/
 │
@@ -61,7 +61,7 @@ resume-job-match-ai/
 
 ⸻
 
-⚙️ How to Run
+How to Run
 
 1. Clone the Repository
 
@@ -90,7 +90,7 @@ streamlit run app/streamlit_app.py
 
 ⸻
 
-🖥️ Application Screenshots
+Application Screenshots
 
 Home Screen
 
@@ -106,7 +106,7 @@ View extracted resume text and inspect the detected skills from both the resume 
 
 ⸻
 
-📊 Example Output
+ Example Output
 
 ATS Verdict: 🟡 Good Match
 
@@ -138,7 +138,7 @@ Recommendations
 
 ⸻
 
-🎯 Learning Outcomes
+Learning Outcomes
 
 This project demonstrates:
 
@@ -154,7 +154,7 @@ This project demonstrates:
 
 ⸻
 
-🚀 Future Improvements
+ Future Improvements
 
 * Resume keyword optimization suggestions
 * Export analysis reports as PDF
@@ -165,7 +165,7 @@ This project demonstrates:
 
 ⸻
 
-👩‍💻 Author
+ Author
 
 Azka Nisar
 
